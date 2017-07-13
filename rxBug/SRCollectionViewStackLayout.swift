@@ -80,7 +80,7 @@ class SRCollectionViewStackLayout: UICollectionViewFlowLayout {
         
         let newRect = CGRect(x: rect.origin.x, y: rect.origin.y + CGFloat(Int(rect.origin.y / 150)) * offset, width: rect.width, height: rect.height + CGFloat(Int(rect.height / 150)) * offset)
         
-        let attributesArray = super.layoutAttributesForElements(in: newRect);
+        var attributesArray = super.layoutAttributesForElements(in: newRect);
         guard let collectionView = self.collectionView else {return attributesArray;}
         let numberOfItems = collectionView.numberOfItems(inSection: 0);
         
@@ -98,9 +98,22 @@ class SRCollectionViewStackLayout: UICollectionViewFlowLayout {
             attributes.center = CGPoint(x: xPosition, y: yPosition);
         }
         
+        let indexPath = IndexPath(item: 0, section: 0)
+        let attributes = self.layoutAttributesForSupplementaryView(ofKind: "Header", at: indexPath)
+        attributesArray?.append(attributes!)
+        
+        
         //print(attributesArray);
         
         return attributesArray;
+    }
+    
+    override func layoutAttributesForSupplementaryView(ofKind elementKind: String, at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {
+        let attributes = UICollectionViewLayoutAttributes(forSupplementaryViewOfKind: elementKind, with: indexPath)
+        
+        attributes.frame = CGRect(x: 0, y: 0, width: 300, height: 120)
+        
+        return attributes
     }
     
     override func layoutAttributesForItem(at indexPath: IndexPath) -> UICollectionViewLayoutAttributes? {

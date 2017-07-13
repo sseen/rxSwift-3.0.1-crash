@@ -24,7 +24,10 @@ class ViewController: UIViewController{
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        //setBindings() This resolve the crash in 3.0.1 
+        
+        collectionView.register(RDHomeCollectionSectionView.self, forSupplementaryViewOfKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "Header")
+        
+        setBindings() //This resolve the crash in 3.0.1
         //setSubView()
         setSubView()
     }
@@ -32,18 +35,21 @@ class ViewController: UIViewController{
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setBindings()
+        // setBindings()
     }
 
     func setSubView() {
+        
+        
         if let layout = collectionView.collectionViewLayout as? UICollectionViewFlowLayout{
-            let size = layout.itemSize
-            let scale = 1000 / 320
+            // let size = layout.itemSize
+            // let scale = 1
             let layout = SRCollectionViewStackLayout();
-            layout.itemSize = size.applying(CGAffineTransform(scaleX: CGFloat(scale), y: CGFloat(scale)))
-           layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+            // layout.itemSize = size.applying(CGAffineTransform(scaleX: CGFloat(scale), y: CGFloat(scale)))
+            // layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             collectionView.collectionViewLayout = layout
         }
+        
     }
     
     func setBindings() {
@@ -58,6 +64,20 @@ class ViewController: UIViewController{
             
             return cell
         }
+        
+         dataSource.supplementaryViewFactory = { (dataSource, cv, kind, ip) in
+        
+             var section:UICollectionReusableView!
+        
+                    if kind == "Header" {
+                 section = cv.dequeueReusableSupplementaryView(ofKind: UICollectionElementKindSectionHeader, withReuseIdentifier: "Header", for: ip) as! RDHomeCollectionSectionView
+                    }
+                    if kind == UICollectionElementKindSectionFooter {
+                        section = cv.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "Footer", for: ip) as! RDHomeCollectionSectionView
+                    }
+        
+             return section
+         }
         
         viewModel.cellsViewModel
             .asObservable().observeOn(MainScheduler.instance)
